@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Buscar usuário Github</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+  <style type="text/css">
+    body{background-color: #EEE;}
+    .container{margin-top:75px; margin-bottom: 75px; background: #FFF; padding-top: 20px; box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.1); box-sizing: border-box; overflow: hidden; }
+    .modal-dialog{max-width: 90%;}
+  </style>
+</head>
+<body ng-app="app" ng-controller="Ctrl">
+  <header>
+    <nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark">
+      <a class="navbar-brand" href="#">Buscador</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <input class="form-control" type="search" ng-keyup="update()" ng-model="user" placeholder="Buscar" aria-label="Search">
+      </div>
+    </nav>
+  </header>
+    <div class='container'>
+      <div class='row'>
+        <div class='col-md-12'>
+          <h2>Buscando por: {{user}}</h2>
+          <hr>
+          <table class="table table-responsive-sm table-striped">
+            <thead class="thead-dark">
+              <tr>
+                <th scope="col">Avatar</th>
+                <th scope="col">Username</th>
+                <th scope="col">URL</th>
+                <th scope="col">Detalhes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="x in users">
+                <td><img class="rounded-circle" ng-src="{{ x.avatar_url }}" width="75" height="75"/></td>
+                <td>{{ x.login }}</td>
+                <td><a target="_blank" ng-href="{{ x.html_url }}">{{ x.html_url }}</a></td>
+                <td><button class="btn btn-primary" ng-click="detail(x)">Mais detalhes</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+<!-- Modal -->
+<div class="modal fade" ng-model="details" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">User: {{details.login}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <table class="table table-responsive-sm table-striped">
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">Avatar</th>
+              <th scope="col">Username</th>
+              <th scope="col">URL</th>
+              <th scope="col">Email</th>
+              <th scope="col">Seguidores</th>
+              <th scope="col">Seguindo</th>
+              <th scope="col">Blog</th>
+              <th scope="col">Bio</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><img ng-src="{{ details.avatar_url }}" width="75" height="75"/></td>
+              <td>{{ details.login }}</td>
+              <td><a target="_blank" ng-href="{{ details.html_url }}">{{ details.html_url }}</a></td>
+              <td>{{details.email}}</td>
+              <td>{{details.followers}}</td>
+              <td>{{details.following}}</td>
+              <td><a target="_blank" ng-href="{{ details.blog }}">{{details.blog}}</a></td>
+              <td>{{details.bio}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+<nav class="navbar navbar-expand-lg fixed-bottom navbar-dark bg-dark">
+  <span class="text-right" style="color:#FFF; float: left; width: 100%; font-size:12px; ">Projeto desenvolvido por: Luiz Carlos Rosetolato Junior</span>
+</nav>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+  <script>
+  var app = angular.module('app', []);
+  app.controller('Ctrl', function($scope, $http) {
+      $scope.update = function(){
+        var user = $scope.user;
+        if(user!=null){
+          $http.get("https://api.github.com/search/users?q="+user)
+          .then(function (response) {$scope.users = response.data.items;});
+        }
+      };
+      $scope.detail = function(section){
+          $http.get(section.url).then(function (data) {
+          $scope.details = data.data;
+        });
+        $('#exampleModal').modal('show');
+      };
+  });
+
+  </script>
+</body>
+</html>
