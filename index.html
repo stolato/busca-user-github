@@ -28,25 +28,21 @@
         <div class='col-md-12'>
           <h2>Buscando por: {{user}}</h2>
           <hr>
-          <table class="table table-responsive-sm table-striped">
-            <thead class="thead-dark">
-              <tr>
-                <th scope="col">Avatar</th>
-                <th scope="col">Username</th>
-                <th scope="col">URL</th>
-                <th scope="col">Detalhes</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr ng-repeat="x in users">
-                <td><img class="rounded-circle" ng-src="{{ x.avatar_url }}" width="75" height="75"/></td>
-                <td>{{ x.login }}</td>
-                <td><a target="_blank" ng-href="{{ x.html_url }}">{{ x.html_url }}</a></td>
-                <td><button class="btn btn-primary" ng-click="detail(x)">Mais detalhes</button></td>
-              </tr>
-            </tbody>
-          </table>
+          <div class='row'>
+          <div ng-repeat="x in users" class="col-md-3">
+            <div class="card">
+              <img class="card-img-top" ng-src="{{x.avatar_url}}" alt="Card image cap">
+              <div class="card-body">
+                <h5 class="card-title">{{x.login}}</h5>
+                <p class="card-text"><a ng-href="{{x.html_url}}">{{x.html_url}}</a></p>
+                <p class="card-text"><strong>Score:</strong> {{x.score | number:2}}</p>
+                <button ng-click="detail(x)" class="btn btn-danger form-control">Mais Detalhes</button>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
+
       </div>
     </div>
 
